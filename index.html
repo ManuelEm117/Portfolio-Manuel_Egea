@@ -1,4 +1,4 @@
-<!doctype html> 
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -822,8 +822,222 @@
           transform: translateY(0);
         }
       }
+
+      /* MODAL - Ventana emergente */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        border-radius: 20px;
+        max-width: 400px;
+        width: 90%;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: modalSlideIn 0.3s ease-out;
+        border: 1px solid rgba(100, 108, 255, 0.3);
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          transform: translateY(-50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .modal-content h3 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #1a1a2e;
+      }
+
+      .modal-content p {
+        color: #666;
+        margin-bottom: 20px;
+      }
+
+      .modal-contact-info {
+        background: #f0f2f5;
+        border-radius: 12px;
+        padding: 15px;
+        margin: 20px 0;
+      }
+
+      .modal-contact-info a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px;
+        text-decoration: none;
+        color: #333;
+        font-size: 18px;
+        transition: all 0.3s;
+        border-radius: 10px;
+      }
+
+      .modal-contact-info a:hover {
+        background: rgba(100, 108, 255, 0.1);
+        color: #646cff;
+      }
+
+      .modal-close {
+        background: #646cff;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.3s;
+      }
+
+      .modal-close:hover {
+        background: #4f55d6;
+        transform: scale(1.05);
+      }
+
+      .captcha-input {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        margin: 15px 0;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .captcha-question {
+        font-size: 28px;
+        font-weight: bold;
+        color: #646cff;
+        background: #f0f2f5;
+        padding: 15px;
+        border-radius: 12px;
+        margin: 15px 0;
+      }
+
+      .btn-captcha {
+        background: #646cff;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s;
+      }
+
+      .btn-captcha:hover {
+        background: #4f55d6;
+      }
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none !important;
+          visibility: hidden !important;
+          pointer-events: none !important;
+          position: absolute !important;
+          width: 0 !important;
+          height: 0 !important;
+          overflow: hidden !important;
+          opacity: 0 !important;
+        }
+      }
+      @media (max-width: 768px) {
+        .hero-scroll {
+          position: absolute;
+          bottom: 30px;
+          left: 50% !important;
+          right: auto !important;
+          transform: translateX(-50%) !important;
+          text-align: center;
+          width: auto;
+        }
+        /* Centrar el logo en móvil */
+        #navbar {
+          justify-content: center !important;
+        }
+
+        .nav-logo {
+          text-align: center;
+          width: auto;
+          margin: 0 auto;
+        }
+      }
     </style>
   </head>
+  <!-- MODAL EMERGENTE -->
+  <div id="contactModal" class="modal">
+    <div class="modal-content">
+      <div id="modalCaptcha">
+        <h3>🔐 Verificación de seguridad</h3>
+        <p>Resuelve la operación para ver los datos de contacto</p>
+        <div class="captcha-question" id="captchaQuestion">---</div>
+        <input
+          type="number"
+          id="captchaAnswer"
+          class="captcha-input"
+          placeholder="Escribe el resultado"
+        />
+        <div
+          id="captchaError"
+          style="
+            color: #ff4444;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+            text-align: center;
+          "
+        >
+          ❌ Operación incorrecta. Vuelve a intentarlo.
+        </div>
+        <button id="verifyCaptchaBtn" class="btn-captcha">Verificar</button>
+      </div>
+      <div id="modalContactInfo" style="display: none">
+        <h3>📱 Información de contacto</h3>
+        <p>Gracias por verificar que eres humano</p>
+        <div class="modal-contact-info">
+          <a href="#" id="modalPhoneLink">
+            <span>📞</span> <span id="modalPhoneNumber">---</span>
+          </a>
+          <a href="mailto:manuelBusiness2@proton.me">
+            <span>✉️</span> manuelBusiness2@proton.me
+          </a>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+              padding: 12px;
+            "
+          >
+            <span>📍</span> Cieza, Murcia
+          </div>
+        </div>
+        <button class="modal-close" id="closeModalBtn">Cerrar</button>
+      </div>
+    </div>
+  </div>
   <body>
     <!-- NAV -->
     <nav id="navbar">
@@ -910,17 +1124,9 @@
               margin-bottom: 1rem;
             "
           >
-            Información de contacto
+            Información
           </p>
           <ul class="info-list">
-            <li><span class="icon">📍</span> Cieza, Murcia</li>
-            <li><span class="icon">📞</span> 635 29 17 81</li>
-            <li>
-              <span class="icon">✉️</span>
-              <a href="mailto:manuelBusiness2@proton.me"
-                >manuelBusiness2@proton.me</a
-              >
-            </li>
             <li><span class="icon">🚗</span> Carnet B (sin vehículo propio)</li>
             <li>
               <span class="icon">🕗</span> Disponibilidad mañanas (intensivo)
@@ -1178,16 +1384,35 @@
           Disponible para oportunidades laborales, proyectos y
           colaboraciones.<br />Turno de mañanas (jornada intensiva).
         </p>
+        <div class="hero-ctas">
+          <button id="miBoton" class="btn-primary">
+            Ver información de contacto
+          </button>
+        </div>
         <div class="contact-grid reveal reveal-delay-3">
-          <a href="tel:635291781" class="contact-item">
+          <a
+            href="#"
+            class="contact-item"
+            id="phoneLinkBlur"
+            style="filter: blur(4px); pointer-events: none; user-select: none"
+          >
             <span class="ci-icon">📞</span>
-            635 29 17 81
+            ●●● ●● ●● ●●
           </a>
-          <a href="mailto:manuelBusiness2@proton.me" class="contact-item">
+          <a
+            href="mailto:manuelBusiness2@proton.me"
+            class="contact-item"
+            id="phoneLinkBlur"
+            style="filter: blur(4px); pointer-events: none; user-select: none"
+          >
             <span class="ci-icon">✉️</span>
             manuelBusiness2@proton.me
           </a>
-          <div class="contact-item">
+          <div
+            class="contact-item"
+            id="phoneLinkBlur"
+            style="filter: blur(4px); pointer-events: none; user-select: none"
+          >
             <span class="ci-icon">📍</span>
             Cieza, Murcia
           </div>
@@ -1242,6 +1467,196 @@
         { threshold: 0.12 },
       );
       reveals.forEach((el) => observer.observe(el));
+
+      function gen() {
+        const a = (() => {
+          let suma = 0;
+          for (let i = 1; i <= 10000; i++) suma += 1 / (i * i);
+          return Math.round((Math.PI * Math.PI) / suma);
+        })();
+
+        const phi = (1 + Math.sqrt(5)) / 2;
+        const eIndirecto = Math.floor(Math.sqrt(4));
+        const b = Math.floor(Math.PI * phi - eIndirecto);
+
+        const dd = Math.floor(Math.log(Math.pow(Math.PI, Math.PI)) * phi);
+
+        let zeta3 = 0;
+        for (let i = 1; i <= 10000; i++) zeta3 += 1 / (i * i * i);
+        const e = Math.floor((Math.PI * Math.PI) / (zeta3 * 4));
+
+        const f = Math.floor(Math.PI * Math.PI);
+
+        const tt = Math.floor(Math.cos(0));
+
+        const u = Math.floor(Math.E * Math.E);
+
+        const ePi = Math.pow(Math.E, Math.PI);
+        const piCuadrado = Math.PI * Math.PI;
+        const ddIndirecto = Math.floor(piCuadrado / 2);
+        const y = Math.floor(ePi - (piCuadrado + ddIndirecto));
+
+        return parseInt(`${a}${b}${dd}${e}${f}${tt}${u}${y}${tt}`);
+      }
+
+      function r3c4p7ch7() {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        const operadores = ["+", "-", "*"];
+        const operador =
+          operadores[Math.floor(Math.random() * operadores.length)];
+
+        let resultado;
+        let operacionTexto;
+
+        switch (operador) {
+          case "+":
+            resultado = num1 + num2;
+            operacionTexto = `${num1} + ${num2}`;
+            break;
+          case "-":
+            // Asegurar que el número grande reste el pequeño
+            const mayor = Math.max(num1, num2);
+            const menor = Math.min(num1, num2);
+            resultado = mayor - menor;
+            operacionTexto = `${mayor} - ${menor}`;
+            break;
+          case "*":
+            resultado = num1 * num2;
+            operacionTexto = `${num1} × ${num2}`;
+            break;
+        }
+
+        return {
+          operacion: operacionTexto,
+          resultado: resultado,
+        };
+      }
+
+      // Variables globales para el modal
+      let currentCaptcha = null;
+      let generatedPhoneNumber = null;
+
+      // Función para mostrar el modal
+      function showModal() {
+        const modal = document.getElementById("contactModal");
+        modal.style.display = "flex";
+      }
+
+      // Función para cerrar el modal
+      function closeModal() {
+        const modal = document.getElementById("contactModal");
+        modal.style.display = "none";
+        // Resetear el modal
+        document.getElementById("modalCaptcha").style.display = "block";
+        document.getElementById("modalContactInfo").style.display = "none";
+        document.getElementById("captchaAnswer").value = "";
+        currentCaptcha = null;
+      }
+
+      // Función para generar nuevo captcha
+      function generarNuevoCaptcha() {
+        currentCaptcha = r3c4p7ch7();
+        document.getElementById("captchaQuestion").textContent =
+          `${currentCaptcha.operacion} = ?`;
+        // Limpiar input y ocultar mensaje de error
+        document.getElementById("captchaAnswer").value = "";
+        document.getElementById("captchaError").style.display = "none";
+        // Quitar el borde rojo si existe
+        document.getElementById("captchaAnswer").style.borderColor = "";
+      }
+
+      // Función para mostrar la información de contacto
+      function mostrarContacto(phoneNumber) {
+        const numStr = phoneNumber.toString();
+        const formateado = `${numStr.slice(0, 3)} ${numStr.slice(3, 6)} ${numStr.slice(6, 9)}`;
+
+        // Actualizar el modal con el número generado
+        document.getElementById("modalPhoneNumber").textContent = formateado;
+        document.getElementById("modalPhoneLink").href = `tel:${phoneNumber}`;
+
+        // También actualizar el enlace del DOM original (por si acaso)
+        const contactLink = document.querySelector(
+          '.contact-item[href="tel:635291781"]',
+        );
+        if (contactLink) {
+          contactLink.href = `tel:${phoneNumber}`;
+          contactLink.innerHTML = `<span class="ci-icon">📞</span> ${formateado}`;
+        }
+
+        // Cambiar la vista del modal
+        document.getElementById("modalCaptcha").style.display = "none";
+        document.getElementById("modalContactInfo").style.display = "block";
+      }
+
+      // Evento del botón principal
+      document.getElementById("miBoton").addEventListener("click", function () {
+        // Generar el número de teléfono (solo una vez)
+        if (!generatedPhoneNumber) {
+          generatedPhoneNumber = gen();
+        }
+
+        // Generar nuevo captcha
+        generarNuevoCaptcha();
+
+        // Mostrar el modal
+        showModal();
+      });
+
+      // Evento para verificar el captcha
+      // Evento para verificar el captcha
+      document
+        .getElementById("verifyCaptchaBtn")
+        .addEventListener("click", function () {
+          const respuestaUsuario =
+            document.getElementById("captchaAnswer").value;
+          const errorDiv = document.getElementById("captchaError");
+          const inputElement = document.getElementById("captchaAnswer");
+
+          if (respuestaUsuario === "") {
+            errorDiv.textContent = "❌ Por favor, introduce un resultado";
+            errorDiv.style.display = "block";
+            inputElement.style.borderColor = "#ff4444";
+            return;
+          }
+
+          if (parseInt(respuestaUsuario) === currentCaptcha.resultado) {
+            // Captcha correcto - mostrar contacto
+            mostrarContacto(generatedPhoneNumber);
+          } else {
+            // Mostrar error sin alert
+            errorDiv.textContent = `❌ Operación incorrecta. El resultado de ${currentCaptcha.operacion} es ${currentCaptcha.resultado}`;
+            errorDiv.style.display = "block";
+            inputElement.style.borderColor = "#ff4444";
+
+            // Generar nuevo captcha para reintentar después de 1 segundo
+            setTimeout(() => {
+              generarNuevoCaptcha();
+            }, 1500);
+          }
+        });
+
+      // Evento para cerrar el modal
+      document
+        .getElementById("closeModalBtn")
+        .addEventListener("click", function () {
+          closeModal();
+        });
+
+      // Limpiar error cuando el usuario empiece a escribir
+      document
+        .getElementById("captchaAnswer")
+        .addEventListener("input", function () {
+          document.getElementById("captchaError").style.display = "none";
+          this.style.borderColor = "";
+        });
+      // Cerrar modal si se clickea fuera del contenido
+      window.addEventListener("click", function (event) {
+        const modal = document.getElementById("contactModal");
+        if (event.target === modal) {
+          closeModal();
+        }
+      });
     </script>
   </body>
 </html>
