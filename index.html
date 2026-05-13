@@ -14,28 +14,19 @@
   <div id="contactModal" class="modal">
     <div class="modal-content">
       <div id="modalCaptcha">
-        <h3>🔐 Verificación de seguridad</h3>
-        <p>Resuelve la operación para ver los datos de contacto</p>
-        <div class="captcha-question" id="captchaQuestion">---</div>
-        <input
-          type="number"
-          id="captchaAnswer"
-          class="captcha-input"
-          placeholder="Escribe el resultado"
-        />
-        <div
-          id="captchaError"
-          style="
-            color: #ff4444;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-            text-align: center;
-          "
-        >
-          ❌ Operación incorrecta. Vuelve a intentarlo.
+        <h3>🔐 Verificación de acceso</h3>
+        <p>Confirma la solicitud para desbloquear los datos de contacto.</p>
+        <div class="verification-panel" aria-live="polite">
+          <div class="verification-copy">
+            <span class="verification-kicker">Cloudflare Turnstile</span>
+            <strong>Protección anti-abuso activa</strong>
+          </div>
+          <div id="turnstileWidget" class="turnstile-widget"></div>
+          <input type="hidden" id="turnstileToken" />
+          <div id="turnstileStatus" class="turnstile-status">
+            Esperando verificación segura...
+          </div>
         </div>
-        <button id="verifyCaptchaBtn" class="btn-captcha">Verificar</button>
       </div>
       <div id="modalContactInfo" style="display: none">
         <h3>📱 Información de contacto</h3>
@@ -418,7 +409,7 @@
           <a
             href="#"
             class="contact-item"
-            id="phoneLinkBlur"
+            id="phoneContactLink"
             style="filter: blur(4px); pointer-events: none; user-select: none"
           >
             <span class="ci-icon">📞</span>
@@ -427,7 +418,7 @@
           <a
             href="mailto:manuelBusiness2@proton.me"
             class="contact-item"
-            id="phoneLinkBlur"
+            id="emailContactLink"
             style="filter: blur(4px); pointer-events: none; user-select: none"
           >
             <span class="ci-icon">✉️</span>
@@ -435,7 +426,7 @@
           </a>
           <div
             class="contact-item"
-            id="phoneLinkBlur"
+            id="locationContactItem"
             style="filter: blur(4px); pointer-events: none; user-select: none"
           >
             <span class="ci-icon">📍</span>
@@ -452,7 +443,11 @@
         Ciberseguridad
       </p>
     </footer>
-
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+      async
+      defer
+    ></script>
     <script src="script.js"></script>
   </body>
 </html>

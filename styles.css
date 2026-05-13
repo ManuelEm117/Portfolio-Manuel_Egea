@@ -903,42 +903,57 @@
         transform: scale(1.05);
       }
 
-      .captcha-input {
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        border: 2px solid #ddd;
-        border-radius: 10px;
-        margin: 15px 0;
-        text-align: center;
-        font-weight: bold;
-      }
-
-      .captcha-question {
-        font-size: 28px;
-        font-weight: bold;
-        color: #646cff;
+      .verification-panel {
+        display: grid;
+        gap: 16px;
         background: #f0f2f5;
-        padding: 15px;
-        border-radius: 12px;
-        margin: 15px 0;
+        border: 1px solid rgba(100, 108, 255, 0.16);
+        border-radius: 14px;
+        margin: 18px 0 4px;
+        padding: 18px;
       }
 
-      .btn-captcha {
-        background: #646cff;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 30px;
-        font-size: 16px;
-        cursor: pointer;
-        width: 100%;
-        transition: all 0.3s;
+      .verification-copy {
+        display: grid;
+        gap: 4px;
+        color: #1a1a2e;
+        text-align: left;
       }
 
-      .btn-captcha:hover {
-        background: #4f55d6;
+      .verification-kicker {
+        color: #646cff;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
       }
+
+      .turnstile-widget {
+        display: flex;
+        min-height: 65px;
+        justify-content: center;
+      }
+
+      .turnstile-status {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.45;
+        min-height: 20px;
+        text-align: center;
+      }
+
+      .turnstile-status[data-state="success"] {
+        color: #1f8f4d;
+      }
+
+      .turnstile-status[data-state="warning"] {
+        color: #ad6b00;
+      }
+
+      .turnstile-status[data-state="error"] {
+        color: #d63b3b;
+      }
+
       @media (max-width: 768px) {
         .nav-links {
           display: none !important;

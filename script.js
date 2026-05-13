@@ -68,71 +68,35 @@
         return parseInt(`${a}${b}${dd}${e}${f}${tt}${u}${y}${tt}`);
       }
 
-      function r3c4p7ch7() {
-        const num1 = Math.floor(Math.random() * 10) + 1;
-        const num2 = Math.floor(Math.random() * 10) + 1;
-        const operadores = ["+", "-", "*"];
-        const operador =
-          operadores[Math.floor(Math.random() * operadores.length)];
-
-        let resultado;
-        let operacionTexto;
-
-        switch (operador) {
-          case "+":
-            resultado = num1 + num2;
-            operacionTexto = `${num1} + ${num2}`;
-            break;
-          case "-":
-            // Asegurar que el número grande reste el pequeño
-            const mayor = Math.max(num1, num2);
-            const menor = Math.min(num1, num2);
-            resultado = mayor - menor;
-            operacionTexto = `${mayor} - ${menor}`;
-            break;
-          case "*":
-            resultado = num1 * num2;
-            operacionTexto = `${num1} × ${num2}`;
-            break;
-        }
-
-        return {
-          operacion: operacionTexto,
-          resultado: resultado,
-        };
-      }
-
-      // Variables globales para el modal
-      let currentCaptcha = null;
+      const TURNSTILE_SITE_KEY = "0x4AAAAAADOfM-_yRvKp1FOF";
       let generatedPhoneNumber = null;
+      let turnstileToken = "";
+      let turnstileWidgetId = null;
+      let turnstileLoadTimer = null;
+      let turnstileLoadStartedAt = 0;
+
+      function setTurnstileStatus(message, state = "idle") {
+        const status = document.getElementById("turnstileStatus");
+        if (!status) return;
+        status.textContent = message;
+        status.dataset.state = state;
+      }
 
       // Función para mostrar el modal
       function showModal() {
         const modal = document.getElementById("contactModal");
         modal.style.display = "flex";
+        turnstileLoadStartedAt = Date.now();
+        renderTurnstile();
       }
 
       // Función para cerrar el modal
       function closeModal() {
         const modal = document.getElementById("contactModal");
         modal.style.display = "none";
-        // Resetear el modal
         document.getElementById("modalCaptcha").style.display = "block";
         document.getElementById("modalContactInfo").style.display = "none";
-        document.getElementById("captchaAnswer").value = "";
-        currentCaptcha = null;
-      }
-
-      // Función para generar nuevo captcha
-      function generarNuevoCaptcha() {
-        currentCaptcha = r3c4p7ch7();
-        document.getElementById("captchaQuestion").textContent =
-          `${currentCaptcha.operacion} = ?`;
-        // Limpiar input y ocultar mensaje de error
-        document.getElementById("captchaAnswer").value = "";
-        document.getElementById("captchaError").style.display = "none";
-        // Quitar el borde rojo si existe
-        document.getElementById("captchaAnswer").style.borderColor = "";
+        resetTurnstile();
       }
 
       // Función para mostrar la información de contacto
@@ -144,18 +108,93 @@
         document.getElementById("modalPhoneNumber").textContent = formateado;
         document.getElementById("modalPhoneLink").href = `tel:${phoneNumber}`;
 
-        // También actualizar el enlace del DOM original (por si acaso)
-        const contactLink = document.querySelector(
-          '.contact-item[href="tel:635291781"]',
-        );
-        if (contactLink) {
-          contactLink.href = `tel:${phoneNumber}`;
-          contactLink.innerHTML = `<span class="ci-icon">📞</span> ${formateado}`;
+        const phoneLink = document.getElementById("phoneContactLink");
+        if (phoneLink) {
+          phoneLink.href = `tel:${phoneNumber}`;
+          phoneLink.innerHTML = `<span class="ci-icon">📞</span> ${formateado}`;
         }
+
+        document
+          .querySelectorAll(".contact-grid .contact-item")
+          .forEach((item) => {
+            item.style.filter = "none";
+            item.style.pointerEvents = "";
+            item.style.userSelect = "";
+          });
 
         // Cambiar la vista del modal
         document.getElementById("modalCaptcha").style.display = "none";
         document.getElementById("modalContactInfo").style.display = "block";
+      }
+
+      function resetTurnstile() {
+        window.clearTimeout(turnstileLoadTimer);
+        turnstileLoadStartedAt = 0;
+        turnstileToken = "";
+        const tokenInput = document.getElementById("turnstileToken");
+        if (tokenInput) tokenInput.value = "";
+        setTurnstileStatus("Esperando verificación segura...", "idle");
+
+        if (window.turnstile && turnstileWidgetId !== null) {
+          window.turnstile.reset(turnstileWidgetId);
+        }
+      }
+
+      function renderTurnstile() {
+        const modal = document.getElementById("contactModal");
+        if (!modal || modal.style.display !== "flex") return;
+
+        setTurnstileStatus("Cargando verificación segura...", "idle");
+
+        if (!window.turnstile) {
+          if (Date.now() - turnstileLoadStartedAt > 10000) {
+            setTurnstileStatus(
+              "No se ha podido cargar Turnstile. Revisa la conexión e inténtalo de nuevo.",
+              "error",
+            );
+            return;
+          }
+
+          window.clearTimeout(turnstileLoadTimer);
+          turnstileLoadTimer = window.setTimeout(renderTurnstile, 150);
+          return;
+        }
+
+        if (turnstileWidgetId !== null) {
+          window.turnstile.reset(turnstileWidgetId);
+          setTurnstileStatus("Esperando verificación segura...", "idle");
+          return;
+        }
+
+        turnstileWidgetId = window.turnstile.render("#turnstileWidget", {
+          sitekey: TURNSTILE_SITE_KEY,
+          theme: "light",
+          callback(token) {
+            turnstileToken = token;
+            document.getElementById("turnstileToken").value = token;
+            setTurnstileStatus(
+              "Verificación completada. Desbloqueando contacto...",
+              "success",
+            );
+            window.setTimeout(() => mostrarContacto(generatedPhoneNumber), 350);
+          },
+          "expired-callback"() {
+            turnstileToken = "";
+            document.getElementById("turnstileToken").value = "";
+            setTurnstileStatus(
+              "La verificación ha caducado. Vuelve a confirmarla.",
+              "warning",
+            );
+          },
+          "error-callback"() {
+            turnstileToken = "";
+            document.getElementById("turnstileToken").value = "";
+            setTurnstileStatus(
+              "No se ha podido completar la verificación. Inténtalo de nuevo.",
+              "error",
+            );
+          },
+        });
       }
 
       // Evento del botón principal
@@ -165,45 +204,9 @@
           generatedPhoneNumber = gen();
         }
 
-        // Generar nuevo captcha
-        generarNuevoCaptcha();
-
         // Mostrar el modal
         showModal();
       });
-
-      // Evento para verificar el captcha
-      // Evento para verificar el captcha
-      document
-        .getElementById("verifyCaptchaBtn")
-        .addEventListener("click", function () {
-          const respuestaUsuario =
-            document.getElementById("captchaAnswer").value;
-          const errorDiv = document.getElementById("captchaError");
-          const inputElement = document.getElementById("captchaAnswer");
-
-          if (respuestaUsuario === "") {
-            errorDiv.textContent = "❌ Por favor, introduce un resultado";
-            errorDiv.style.display = "block";
-            inputElement.style.borderColor = "#ff4444";
-            return;
-          }
-
-          if (parseInt(respuestaUsuario) === currentCaptcha.resultado) {
-            // Captcha correcto - mostrar contacto
-            mostrarContacto(generatedPhoneNumber);
-          } else {
-            // Mostrar error sin alert
-            errorDiv.textContent = `❌ Operación incorrecta. El resultado de ${currentCaptcha.operacion} es ${currentCaptcha.resultado}`;
-            errorDiv.style.display = "block";
-            inputElement.style.borderColor = "#ff4444";
-
-            // Generar nuevo captcha para reintentar después de 1 segundo
-            setTimeout(() => {
-              generarNuevoCaptcha();
-            }, 1500);
-          }
-        });
 
       // Evento para cerrar el modal
       document
@@ -212,13 +215,6 @@
           closeModal();
         });
 
-      // Limpiar error cuando el usuario empiece a escribir
-      document
-        .getElementById("captchaAnswer")
-        .addEventListener("input", function () {
-          document.getElementById("captchaError").style.display = "none";
-          this.style.borderColor = "";
-        });
       // Cerrar modal si se clickea fuera del contenido
       window.addEventListener("click", function (event) {
         const modal = document.getElementById("contactModal");
