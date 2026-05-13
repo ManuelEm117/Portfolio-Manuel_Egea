@@ -82,31 +82,17 @@
         status.dataset.state = state;
       }
 
-      // Función para mostrar el modal
-      function showModal() {
-        const modal = document.getElementById("contactModal");
-        modal.style.display = "flex";
+      function showContactVerification() {
+        const verification = document.getElementById("contactVerification");
+        verification.hidden = false;
         turnstileLoadStartedAt = Date.now();
         renderTurnstile();
-      }
-
-      // Función para cerrar el modal
-      function closeModal() {
-        const modal = document.getElementById("contactModal");
-        modal.style.display = "none";
-        document.getElementById("modalCaptcha").style.display = "block";
-        document.getElementById("modalContactInfo").style.display = "none";
-        resetTurnstile();
       }
 
       // Función para mostrar la información de contacto
       function mostrarContacto(phoneNumber) {
         const numStr = phoneNumber.toString();
         const formateado = `${numStr.slice(0, 3)} ${numStr.slice(3, 6)} ${numStr.slice(6, 9)}`;
-
-        // Actualizar el modal con el número generado
-        document.getElementById("modalPhoneNumber").textContent = formateado;
-        document.getElementById("modalPhoneLink").href = `tel:${phoneNumber}`;
 
         const phoneLink = document.getElementById("phoneContactLink");
         if (phoneLink) {
@@ -122,9 +108,11 @@
             item.style.userSelect = "";
           });
 
-        // Cambiar la vista del modal
-        document.getElementById("modalCaptcha").style.display = "none";
-        document.getElementById("modalContactInfo").style.display = "block";
+        const button = document.getElementById("miBoton");
+        if (button) button.style.display = "none";
+
+        const verification = document.getElementById("contactVerification");
+        if (verification) verification.hidden = true;
       }
 
       function resetTurnstile() {
@@ -141,8 +129,8 @@
       }
 
       function renderTurnstile() {
-        const modal = document.getElementById("contactModal");
-        if (!modal || modal.style.display !== "flex") return;
+        const verification = document.getElementById("contactVerification");
+        if (!verification || verification.hidden) return;
 
         setTurnstileStatus("Cargando verificación segura...", "idle");
 
@@ -176,7 +164,7 @@
               "Verificación completada. Desbloqueando contacto...",
               "success",
             );
-            window.setTimeout(() => mostrarContacto(generatedPhoneNumber), 350);
+            window.setTimeout(() => mostrarContacto(generatedPhoneNumber), 250);
           },
           "expired-callback"() {
             turnstileToken = "";
@@ -204,21 +192,5 @@
           generatedPhoneNumber = gen();
         }
 
-        // Mostrar el modal
-        showModal();
-      });
-
-      // Evento para cerrar el modal
-      document
-        .getElementById("closeModalBtn")
-        .addEventListener("click", function () {
-          closeModal();
-        });
-
-      // Cerrar modal si se clickea fuera del contenido
-      window.addEventListener("click", function (event) {
-        const modal = document.getElementById("contactModal");
-        if (event.target === modal) {
-          closeModal();
-        }
+        showContactVerification();
       });
